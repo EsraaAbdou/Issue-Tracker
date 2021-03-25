@@ -30,7 +30,7 @@ module.exports = function (app) {
       if(issue_title && issue_text && created_by) {
         const created_on = new Date();
         const updated_on = new Date();
-        const open = false;
+        const open = true;
         const issue = new Issue({ issue_title, issue_text, created_on, updated_on, created_by, assigned_to, open, status_text});
         issue.save((err, data) => {
           if(data) res.send(data);
