@@ -22,7 +22,19 @@ module.exports = function (app) {
   
     .get(function (req, res){
       let project = req.params.project;
-
+      let query = {};
+      const issueProperties = ["_id", "issue_title", "issue_text", "created_on", "updated_on","created_by", "assigned_to", "open", "status_text"];
+      issueProperties.forEach(element => {
+        if(req.query[element]) query[element] = req.query[element];
+      });
+      console.log(query)
+      Issue.find(query, (err, data) => {
+        if(err) console.log(err);
+        if(data) {
+          res.json(data);
+          console.log(data.length)
+        }
+      });
     })
 
     .post(function (req, res){
