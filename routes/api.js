@@ -42,7 +42,43 @@ module.exports = function (app) {
     
     .put(function (req, res){
       let project = req.params.project;
-      
+      const id = req.body._id;
+      if(id) {
+        let update = {};
+        for (const [key, value] of Object.entries(req.body)) {
+          if(key !== "_id" && value) update[key] = value;
+        }
+        if(Object.keys(update).length === 0) {
+          res.send({
+            error: 'no update field(s) sent',
+            '_id': id
+          });
+        } else {
+          Issue.findByIdAndUpdate(id, update, (err, data) => {
+            if(err) {
+              res.send({
+                error: 'could not update',
+                '_id': id
+              });
+            }
+            if(data) {
+              res.send({
+                result: 'successfully updated',
+                '_id': id
+              });
+            } else {
+              res.send({
+                error: 'could not update',
+                '_id': id
+              });
+            }
+          });
+        }
+      } else {
+        res.send({
+          error: 'missing _id'
+        });
+      }
     })
     
     .delete(function (req, res){
