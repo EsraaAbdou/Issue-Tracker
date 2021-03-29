@@ -1,4 +1,5 @@
 'use strict';
+const e = require('express');
 // connect to DB
 const mongoose = require('mongoose');
 mongoose.connect(process.env.DB, { useNewUrlParser: true, useUnifiedTopology: true });
@@ -16,7 +17,7 @@ const issueSchema  =  new mongoose.Schema({
 });
 const Issue =  mongoose.model('Issue', issueSchema);
 
-module.exports = function (app) {
+const routes = function (app) {
 
   app.route('/api/issues/:project')
   
@@ -27,12 +28,9 @@ module.exports = function (app) {
       issueProperties.forEach(element => {
         if(req.query[element]) query[element] = req.query[element];
       });
-      console.log(query)
       Issue.find(query, (err, data) => {
-        if(err) console.log(err);
         if(data) {
           res.json(data);
-          console.log(data.length)
         }
       });
     })
@@ -67,20 +65,14 @@ module.exports = function (app) {
           });
         } else {
           Issue.findByIdAndUpdate(id, update, (err, data) => {
-            if(err) {
+            if(err || !data) {
               res.send({
                 error: 'could not update',
-                '_id': id
-              });
-            }
-            if(data) {
-              res.send({
-                result: 'successfully updated',
                 '_id': id
               });
             } else {
               res.send({
-                error: 'could not update',
+                result: 'successfully updated',
                 '_id': id
               });
             }
@@ -99,8 +91,6 @@ module.exports = function (app) {
       if(id){
         Issue.findByIdAndDelete(id, (err, data) => {
           if(data) { 
-                        console.log("sucessful delete")
-
             res.send({
               result: 'successfully deleted','_id': id
             });
@@ -119,3 +109,6 @@ module.exports = function (app) {
     });
     
 };
+
+module.exports.routes = routes;
+module.exports.Issue = Issue;
