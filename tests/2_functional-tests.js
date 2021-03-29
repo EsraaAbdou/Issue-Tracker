@@ -9,86 +9,6 @@ chai.use(chaiHttp);
 
 suite('Functional Tests', function() {
 
-    Issue.remove({}, (err, data) => {});
-
-    suite('Get Requests', function () {
-        const issues = [new Issue({ 
-            "issue_title": "Fix error in posting data(get)",
-            "issue_text": "When we post data it has an error(get)",
-            "created_on": new Date(),
-            "updated_on": new Date(),
-            "created_by": "yara",
-            "assigned_to": "Joe(get)",
-            "open": true,
-            "status_text": ""
-        }), new Issue({ 
-            "issue_title": "Fix error in posting data(get)",
-            "issue_text": "When we post data it has an error(get)",
-            "created_on": new Date(),
-            "updated_on": new Date(),
-            "created_by": "yara",
-            "assigned_to": "Joe(get)",
-            "open": false,
-            "status_text": ""
-        }), new Issue({ 
-            "issue_title": "Fix error in posting data(get)",
-            "issue_text": "When we post data it has an error(get)",
-            "created_on": new Date(),
-            "updated_on": new Date(),
-            "created_by": "Joe(get)",
-            "assigned_to": "Joe(get)",
-            "open": true,
-            "status_text": ""
-        })];
-        Issue.create(issues, (err, save) => {});
-
-        test('Get all issues on a project', function(done) {
-            chai
-            .request(server)
-            .get("/api/issues/apitests")
-            .end(function (err, res) {
-            const response = JSON.parse(res.text);
-            const firstObj = response[0];
-            assert.equal(res.status, 200);
-            assert.equal(response.length, 3);
-            assert.isArray(response, "returned response should be an array");
-            assert.isObject(firstObj, "returned Array should contain objects");
-            assert.hasAllKeys(firstObj, ["_id", "issue_title", "issue_text", "created_on", "updated_on", "created_by", "assigned_to", "open", "status_text"], "returned objects should have all properties");
-            done();
-            });
-        });
-        test('Get issues on a project with one filter', function(done) {
-            chai
-            .request(server)
-            .get("/api/issues/apitests?open=true")
-            .end(function (err, res) {
-            const response = JSON.parse(res.text);
-            const firstObj = response[0];
-            assert.equal(res.status, 200);
-            assert.equal(response.length, 2);
-            assert.isArray(response, "returned response should be an array");
-            assert.isObject(firstObj, "returned Array should contain objects");
-            assert.hasAllKeys(firstObj, ["_id", "issue_title", "issue_text", "created_on", "updated_on", "created_by", "assigned_to", "open", "status_text"], "returned objects should have all properties");
-            done();
-            });
-        });
-        test('Get issues on a project with multiple filters', function(done) {
-            chai
-            .request(server)
-            .get("/api/issues/apitests?open=true&created_by=yara")
-            .end(function (err, res) {
-            const response = JSON.parse(res.text);
-            const firstObj = response[0];
-            assert.equal(res.status, 200);
-            assert.equal(response.length, 1);
-            assert.isArray(response, "returned response should be an array");
-            assert.isObject(firstObj, "returned Array should contain objects");
-            assert.hasAllKeys(firstObj, ["_id", "issue_title", "issue_text", "created_on", "updated_on", "created_by", "assigned_to", "open", "status_text"], "returned objects should have all properties");
-            done();
-            });
-        });
-    });
-
     suite('Post Requests', function () {
         test('Post an issue with every field', function(done) {
         chai
@@ -171,6 +91,85 @@ suite('Functional Tests', function() {
             assert.deepEqual(JSON.parse(res.text), { error: 'required field(s) missing' }, "Expected request to return error");
             done();
         });
+        });
+    });
+
+    suite('Get Requests', function () {
+        const issues = [new Issue({ 
+            "issue_title": "Fix error in posting data(get)",
+            "issue_text": "When we post data it has an error(get)",
+            "created_on": new Date(),
+            "updated_on": new Date(),
+            "created_by": "yara",
+            "assigned_to": "Joe(get)",
+            "open": true,
+            "status_text": ""
+        }), new Issue({ 
+            "issue_title": "Fix error in posting data(get)",
+            "issue_text": "When we post data it has an error(get)",
+            "created_on": new Date(),
+            "updated_on": new Date(),
+            "created_by": "yara",
+            "assigned_to": "Joe(get)",
+            "open": false,
+            "status_text": ""
+        }), new Issue({ 
+            "issue_title": "Fix error in posting data(get)",
+            "issue_text": "When we post data it has an error(get)",
+            "created_on": new Date(),
+            "updated_on": new Date(),
+            "created_by": "Joe(get)",
+            "assigned_to": "Joe(get)",
+            "open": true,
+            "status_text": ""
+        })];
+        
+        test('Get all issues on a project', function(done) {
+            Issue.remove({}, (err, data) => {});
+            Issue.create(issues, (err, save) => {});
+            chai
+            .request(server)
+            .get("/api/issues/apitests")
+            .end(function (err, res) {
+            const response = JSON.parse(res.text);
+            const firstObj = response[0];
+            assert.equal(res.status, 200);
+            assert.equal(response.length, 3);
+            assert.isArray(response, "returned response should be an array");
+            assert.isObject(firstObj, "returned Array should contain objects");
+            assert.hasAllKeys(firstObj, ["_id", "issue_title", "issue_text", "created_on", "updated_on", "created_by", "assigned_to", "open", "status_text"], "returned objects should have all properties");
+            done();
+            });
+        });
+        test('Get issues on a project with one filter', function(done) {
+            chai
+            .request(server)
+            .get("/api/issues/apitests?open=true")
+            .end(function (err, res) {
+            const response = JSON.parse(res.text);
+            const firstObj = response[0];
+            assert.equal(res.status, 200);
+            assert.equal(response.length, 2);
+            assert.isArray(response, "returned response should be an array");
+            assert.isObject(firstObj, "returned Array should contain objects");
+            assert.hasAllKeys(firstObj, ["_id", "issue_title", "issue_text", "created_on", "updated_on", "created_by", "assigned_to", "open", "status_text"], "returned objects should have all properties");
+            done();
+            });
+        });
+        test('Get issues on a project with multiple filters', function(done) {
+            chai
+            .request(server)
+            .get("/api/issues/apitests?open=true&created_by=yara")
+            .end(function (err, res) {
+            const response = JSON.parse(res.text);
+            const firstObj = response[0];
+            assert.equal(res.status, 200);
+            assert.equal(response.length, 1);
+            assert.isArray(response, "returned response should be an array");
+            assert.isObject(firstObj, "returned Array should contain objects");
+            assert.hasAllKeys(firstObj, ["_id", "issue_title", "issue_text", "created_on", "updated_on", "created_by", "assigned_to", "open", "status_text"], "returned objects should have all properties");
+            done();
+            });
         });
     });
 
